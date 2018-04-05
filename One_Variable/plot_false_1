@@ -1,0 +1,3 @@
+f(x) = 10*x**3 + x*tan(x+2*3.1415)**-1+5
+# Plot
+plot f(x) title 'FUNCTION 1' with lines linestyle 1
