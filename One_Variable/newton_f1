@@ -1,0 +1,3 @@
+f(x) = cos(x) - x
+# Plot
+plot f(x) title 'FUNCTION 1' with lines linestyle 1

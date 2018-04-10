@@ -12,12 +12,10 @@ typedef int II;
 typedef double DD;
 
 
-
 void save_text(string filename, string text);
 void save_data(string filename,II iteration, FF a_i, FF b_i, FF r_i, FF f_i);
 FF function_1(FF x);
 FF function_2(FF x);
-
 
 void false_pos_1(FF a, FF b, FF (*f)(FF), II n);
 void false_pos_2(FF a, FF b, FF (*f)(FF), FF tol);
@@ -28,13 +26,9 @@ int main() {
 system("gnuplot -p 'plot_false_1'");
 system("gnuplot -p 'plot_false_2'");
 
-
 false_pos_1(-3, 3, function_2, 30);
 false_pos_2(-3, 3, function_2, 0.0001);
 false_pos_3(-3, 3, function_2, 0.0001);
-
-
-
 
 }
 
@@ -83,6 +77,7 @@ void false_pos_2(FF a, FF b, FF (*f)(FF), FF tol) {
 		}
 	}
 }
+
 void false_pos_3(FF a, FF b, FF (*f)(FF), FF tol) {
 	II k = 0;
 	FF fp, p_2, p_1;
@@ -95,7 +90,6 @@ void false_pos_3(FF a, FF b, FF (*f)(FF), FF tol) {
 
 		k++;
 
-
 		if((FA*fp) > 0) {
 			a = p_2;
 			FA = fp;
@@ -103,13 +97,10 @@ void false_pos_3(FF a, FF b, FF (*f)(FF), FF tol) {
 			b = p_2;
 		}
 
-
-
 		if(k > 1 && abs(p_2-p_1) <= tol) {
 			save_data("false_pos_3.csv", a, b, p_2, abs(p_2-p_1),fp);
 			break;
 		}
-
 		if(k > 1) {
 			save_data("false_pos_3.csv", a, b, p_2, abs(p_2-p_1),fp);
 		}
