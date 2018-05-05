@@ -6,28 +6,26 @@
 
 using namespace std;
 
-// escalona A
-// Sust regresiva (An b)
-// AX = B
-// Met gauss(A, b )
-// AX = B
-// Ecalona Piv A
-// Met Gaus Piv A b
-// AX = B
-
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
-void create_matrix( double** matrix, int rows, int cols );
-void print_matrix( double** matrix, int rows, int cols );
+void create_matrix( double** matrix_A, int rows, int cols );
+void print_matrix( double** matrix_A, int rows, int cols );
 void print_vector( double* vector, int size );
 
 
-void gauss_elimination( double** matrix, int rows, int cols );
-void backward_substitution( double** matrix, int rows, double* x  );
-void gauss_method( double** matrix, int rows, int cols, double* x);
+void gauss_elimination( double** matrix_A, int rows, int cols );
+void backward_substitution( double** matrix_A, int rows, double* x  );
+void gauss_method( double** matrix_A, int rows, int cols, double* x);
 
-void scaled_partial_pivot( double** matrix, int rows, int cols);
-void gauss_partial_pivot_method( double** matrix, int rows, int cols, double* x );
+void scaled_partial_pivot( double** matrix_A, int rows, int cols);
+void gauss_partial_pivot_method( double** matrix_A, int rows, int cols, double* x );
+
+void forward_substitution( double** matrix_A, int rows, double* x  );
+void LU_decomposition( double** matrix_A, int rows, int cols, double* x );
+// DescompLU(A) "No admite descomposicion" si no hay decom
+// ResuelveSistConLU(A, b) AX=B 
+// DescompPlu(A) con pv parcial
+// ResuelveSistPLU(A, b) 
 
 int main() {
 
@@ -55,19 +53,19 @@ int main() {
 	return 0;
 }
 
-void create_matrix( double** matrix, int rows, int cols ) {
+void create_matrix( double** matrix_A, int rows, int cols ) {
 	for( int i = 0; i < rows; i++ ) {
 		for( int j = 0; j < cols; j++ ) {
-			cin >> matrix[i][j];
+			cin >> matrix_A[i][j];
 		}
 	}
 }
 
-void print_matrix( double** matrix, int rows, int cols ) {
+void print_matrix( double** matrix_A, int rows, int cols ) {
 	cout << "\nMatrix of " << rows << " rows and " << cols << " cols\n";
 	for( int i = 0; i < rows; i++) {
 		for( int j = 0; j < cols; j++ )
-			cout << matrix[i][j] << ' ';
+			cout << matrix_A[i][j] << ' ';
 		cout << endl;
 	}	
 }
@@ -80,83 +78,104 @@ void print_vector( double* vector, int size ) {
 	cout << endl;
 }
 
-void gauss_elimination( double** matrix, int rows, int cols ) {
+void gauss_elimination( double** matrix_A, int rows, int cols ) {
 	for(int k = 0; k < rows-1; k++ ) {
 		for( int j = k+1; j < rows; j++ ) {
-			matrix[j][k] = matrix[j][k] / matrix[k][k];
+			matrix_A[j][k] = matrix_A[j][k] / matrix_A[k][k];
 			for( int i = k+1; i < cols; i++ )
-				matrix[j][i] = matrix[j][i] - matrix[j][k]*matrix[k][i];
-			matrix[j][k] = 0;
+				matrix_A[j][i] = matrix_A[j][i] - matrix_A[j][k]*matrix_A[k][i];
+			matrix_A[j][k] = 0;
 		}
 	}
 }
-void backward_substitution( double** matrix, int rows, double* x ) {
+void backward_substitution( double** matrix_A, int rows, double* x ) {
 	double s;
 	for(int i = rows-1; i >= 0; i--) {
-		s = matrix[i][rows];
+		s = matrix_A[i][rows];
 		for(int j=i+1; j<rows; j++)
-			s -= matrix[i][j]*x[j];
-		x[i] = s/matrix[i][i];
+			s -= matrix_A[i][j]*x[j];
+		x[i] = s/matrix_A[i][i];
 	}
 }
 
-void gauss_method( double** matrix, int rows, int cols, double* x) {
+void gauss_method( double** matrix_A, int rows, int cols, double* x) {
 
-	create_matrix( matrix, rows, cols);
-	print_matrix( matrix, rows, cols);
+	create_matrix( matrix_A, rows, cols);
+	print_matrix( matrix_A, rows, cols);
 	
-	gauss_elimination( matrix, rows, cols);
+	gauss_elimination( matrix_A, rows, cols);
 	
-	print_matrix( matrix, rows, cols);
+	print_matrix( matrix_A, rows, cols);
 	
-	backward_substitution(matrix, rows, x);
+	backward_substitution(matrix_A, rows, x);
 
 	print_vector( x, rows);
 }
 
-void scaled_partial_pivot( double** matrix, int rows, int cols) {
+void scaled_partial_pivot( double** matrix_A, int rows, int cols) {
 
 	for(int k = 0; k < rows-1; k++ ) {
-	
 		double tmp = 0;
 		int index_max = 0;
 		for(int m=0; m<rows; m++) {
-			tmp = MAX( tmp, abs(matrix[m][k]) );
+			tmp = MAX( tmp, abs(matrix_A[m][k]) );
 			index_max = m;
 		}
 		
-		
 		for(int n=0; n<cols; n++) {
-			tmp = matrix[k][n];
-			matrix[k][n] = matrix[index_max][n];
-			matrix[index_max][n] = tmp;
+			tmp = matrix_A[k][n];
+			matrix_A[k][n] = matrix_A[index_max][n];
+			matrix_A[index_max][n] = tmp;
 		}
 	
 		for( int j = k+1; j < rows; j++ ) {
-			matrix[j][k] = matrix[j][k] / matrix[k][k];
+			matrix_A[j][k] = matrix_A[j][k] / matrix_A[k][k];
 			for( int i = k+1; i < cols; i++ )
-				matrix[j][i] = matrix[j][i] - matrix[j][k]*matrix[k][i];
-			matrix[j][k] = 0;
+				matrix_A[j][i] = matrix_A[j][i] - matrix_A[j][k]*matrix_A[k][i];
+			matrix_A[j][k] = 0;
 		}
 	}
 }
 
-void gauss_partial_pivot_method( double** matrix, int rows, int cols, double* x ) {
+void gauss_partial_pivot_method( double** matrix_A, int rows, int cols, double* x ) {
 	
-	create_matrix( matrix, rows, cols);
-	print_matrix( matrix, rows, cols);
+	create_matrix( matrix_A, rows, cols);
+	print_matrix( matrix_A, rows, cols);
 	
-	scaled_partial_pivot( matrix, rows, cols);
+	scaled_partial_pivot( matrix_A, rows, cols);
 	
-	print_matrix( matrix, rows, cols);
+	print_matrix( matrix_A, rows, cols);
 	
-	backward_substitution(matrix, rows, x);
+	backward_substitution(matrix_A, rows, x);
 
 	print_vector( x, rows);
 }
 
 
+// void forward_substitution( double** matrix_A, int rows, double* x  );
+void LU_decomposition( double** matrix_A, int rows, int cols, double* x ) {
 
+	double** L = new double*[rows];
+	for( int i = 0; i < rows; i++ )
+		L[i] = new double[cols];
+		
+	double** U = new double*[rows];
+	for( int i = 0; i < rows; i++ )
+		U[i] = new double[cols];
+	
+
+
+	
+
+	for (int i = 0; i < rows; ++i)
+		delete [] L[i];
+	delete [] L;
+	
+	for (int i = 0; i < rows; ++i)
+		delete [] U[i];
+	delete [] U;
+
+}
 
 
 
