@@ -24,6 +24,9 @@ void forward_substitution( double** matrix_A, int rows, double* x  );
 void LU_decomposition( double** matrix_A, int rows, int cols, 
 												double** L, double* x );
 void LU_method( double** matrix_A, int rows, int cols, double* x );
+
+void PLU_descomposition( double** matrix_A, int rows, int cols, double** P);
+void PLU_method( double** matrix_A, int rows, int cols, double* x );
 // DescompLU(A) "No admite descomposicion" si no hay decom
 // ResuelveSistConLU(A, b) AX=B 
 // DescompPlu(A) con pv parcial
@@ -40,8 +43,8 @@ int main() {
 		
 	double* x = new double[rows];
 	
-	
-	LU_method(A, rows, cols, x);
+	PLU_method(A, rows, cols, x);
+	// LU_method(A, rows, cols, x);
 	// gauss_method(A, rows, cols, x);
 	// gauss_partial_pivot_method( A, rows, cols, x);
 	
@@ -234,5 +237,111 @@ void LU_method( double** matrix_A, int rows, int cols, double* x ) {
 
 }
 
+void PLU_descomposition( double** matrix_A, int rows, int cols, double** P ) {
 
+	for(int k = 0; k < rows-1; k++ ) {
+		double tmp = 0;
+		int index_max = 0;
+		for(int m=0; m<rows; m++) {
+			tmp = MAX( tmp, abs(matrix_A[m][k]) );
+			index_max = m;
+		}
+		
+		for(int n=0; n<cols; n++) {
+			tmp = matrix_A[k][n];
+			matrix_A[k][n] = matrix_A[index_max][n];
+			matrix_A[index_max][n] = tmp;
+		}
+
+		for(int n=0; n<rows; n++) {
+			tmp = P[k][n];
+			P[k][n] = P[index_max][n];
+			P[index_max][n] = tmp;
+		}
+	
+		for( int j = k+1; j < rows; j++ ) {
+			matrix_A[j][k] = matrix_A[j][k] / matrix_A[k][k];
+			for( int i = k+1; i < cols; i++ )
+				matrix_A[j][i] = matrix_A[j][i] - matrix_A[j][k]*matrix_A[k][i];
+		}
+	}
+
+	cout << "\nMatrix P after:" << endl;
+	print_matrix(P, rows, rows);
+
+}
+void PLU_method( double** matrix_A, int rows, int cols, double* x ) {
+
+	double** P = new double*[rows];
+	for( int i = 0; i < rows; i++ )
+		P[i] = new double[rows];
+
+	double** L = new double*[rows];
+	for( int i = 0; i < rows; i++ )
+		L[i] = new double[rows];
+
+	double** U = new double*[rows];
+	for( int i = 0; i < rows; i++ )
+		U[i] = new double[rows];
+
+	for(int i = 0; i < rows; i++ ) {
+		for( int j = 0; j < rows; j++ ) {
+			if( i == j)
+				P[i][j] = 1;
+		}
+	}
+
+	cout << "Initial matrix P:" << endl;
+	print_matrix(P, rows, rows);
+
+
+	create_matrix( matrix_A, rows, cols);
+
+	cout << "Matriz A:" << endl;
+	print_matrix(matrix_A, rows, cols);
+
+	PLU_descomposition(matrix_A, rows, cols, P);
+	// scaled_partial_pivot(matrix_A, rows, cols);
+	print_matrix(matrix_A, rows, cols);
+
+	for(int i=0; i<rows; i++) {
+		for(int j=0; j<rows; j++) {
+			if(i>j) {
+				L[i][j] = matrix_A[i][j];
+				matrix_A[i][j] = 0;
+			}
+			else
+				U[i][j] = matrix_A[i][j];
+		}
+	}
+
+	cout << "\nMatriz L:" << endl;
+	print_matrix(L, rows, rows);
+
+	cout << "\nMatriz U:" << endl;
+	print_matrix(U, rows, rows);
+
+	cout << "vector X" << endl;
+
+	// for(int i=0; i<rows; i++)
+	// 	cout << matrix_A[i][rows] << ' ';
+	// cout << endl;
+
+	backward_substitution(matrix_A, rows, x);
+	print_vector(x, rows);
+
+
+	for (int i = 0; i < rows; ++i)
+		delete [] P[i];
+	delete [] P;
+
+	for (int i = 0; i < rows; ++i)
+		delete [] L[i];
+	delete [] L;
+
+	for (int i = 0; i < rows; ++i)
+		delete [] U[i];
+	delete [] U;
+
+}
 
