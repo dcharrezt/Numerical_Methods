@@ -21,7 +21,9 @@ void scaled_partial_pivot( double** matrix_A, int rows, int cols);
 void gauss_partial_pivot_method( double** matrix_A, int rows, int cols, double* x );
 
 void forward_substitution( double** matrix_A, int rows, double* x  );
-void LU_decomposition( double** matrix_A, int rows, int cols, double* x );
+void LU_decomposition( double** matrix_A, int rows, int cols, 
+												double** L, double* x );
+void LU_method( double** matrix_A, int rows, int cols, double* x );
 // DescompLU(A) "No admite descomposicion" si no hay decom
 // ResuelveSistConLU(A, b) AX=B 
 // DescompPlu(A) con pv parcial
@@ -39,9 +41,9 @@ int main() {
 	double* x = new double[rows];
 	
 	
-	gauss_method(A, rows, cols, x);
-
-//	gauss_partial_pivot_method( A, rows, cols, x);
+	LU_method(A, rows, cols, x);
+	// gauss_method(A, rows, cols, x);
+	// gauss_partial_pivot_method( A, rows, cols, x);
 	
 
 	for (int i = 0; i < rows; ++i)
@@ -88,6 +90,7 @@ void gauss_elimination( double** matrix_A, int rows, int cols ) {
 		}
 	}
 }
+
 void backward_substitution( double** matrix_A, int rows, double* x ) {
 	double s;
 	for(int i = rows-1; i >= 0; i--) {
@@ -97,6 +100,8 @@ void backward_substitution( double** matrix_A, int rows, double* x ) {
 		x[i] = s/matrix_A[i][i];
 	}
 }
+
+
 
 void gauss_method( double** matrix_A, int rows, int cols, double* x) {
 
@@ -151,9 +156,46 @@ void gauss_partial_pivot_method( double** matrix_A, int rows, int cols, double* 
 	print_vector( x, rows);
 }
 
+void forward_substitution( double** matrix_A, int rows, double* x  ) {
+	double s;
+	for(int i = 0; i < rows; i++) {
+		s = matrix_A[i][rows];
+		for(int j=0; j < rows; j++)
+			s -=  matrix_A[i][j]*x[j];
+		x[i] = s/matrix_A[i][i];
+	}
+}
 
-// void forward_substitution( double** matrix_A, int rows, double* x  );
-void LU_decomposition( double** matrix_A, int rows, int cols, double* x ) {
+void LU_decomposition( double** matrix_A, int rows, int cols, 
+												double** L, double* x ) {
+	if(matrix_A[0][0] == 0)
+		cout << "Factorization impossible" << endl;
+
+	for(int k = 0; k < rows-1; k++ ) {
+		for( int j = k+1; j < rows; j++ ) {
+			matrix_A[j][k] = matrix_A[j][k] / matrix_A[k][k];
+			L[j][k] = matrix_A[j][k];
+			for( int i = k+1; i < cols; i++ )
+				matrix_A[j][i] = matrix_A[j][i] - matrix_A[j][k]*matrix_A[k][i];
+			matrix_A[j][k] = 0;
+		}
+	}
+
+	for(int i = 0; i < rows; i++ ) {
+		for( int j = 0; j < cols; j++ ) {
+			( i==j ? L[i][j] = 1 : 1);
+			( j == cols-1 ? L[i][j] = matrix_A[i][j] : 1 );
+		}
+	}
+
+	cout << "\nMatrix L:" << endl;
+	print_matrix(L, rows, cols);
+	// forward_substitution(L, rows, y);
+	// print_vector(y , rows);
+}
+
+
+void LU_method( double** matrix_A, int rows, int cols, double* x ) {
 
 	double** L = new double*[rows];
 	for( int i = 0; i < rows; i++ )
@@ -162,10 +204,23 @@ void LU_decomposition( double** matrix_A, int rows, int cols, double* x ) {
 	double** U = new double*[rows];
 	for( int i = 0; i < rows; i++ )
 		U[i] = new double[cols];
-	
 
-
+	double* y = new double[rows];
 	
+	create_matrix( matrix_A, rows, cols);
+
+	cout << "Matriz A:" << endl;
+	print_matrix(matrix_A, rows, cols);
+
+	LU_decomposition( matrix_A, rows, cols, L, x);
+
+	cout << "\nMatrix U:" << endl;
+	print_matrix(matrix_A, rows, cols);
+
+	backward_substitution(matrix_A, rows, x);
+	cout << "\nVector X:" << endl;
+	print_vector(x, rows);
+
 
 	for (int i = 0; i < rows; ++i)
 		delete [] L[i];
@@ -175,8 +230,9 @@ void LU_decomposition( double** matrix_A, int rows, int cols, double* x ) {
 		delete [] U[i];
 	delete [] U;
 
-}
+	delete [] y;
 
+}
 
 
 
