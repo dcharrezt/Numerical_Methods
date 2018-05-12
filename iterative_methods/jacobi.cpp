@@ -11,8 +11,9 @@ void print_vector( double* vector, int size );
 void print_matrix( double** matrix_A, int rows, int cols );
 
 double norm_sum( double* vect, int size);
+double vector_substration(double* vect_1, double* vect_2, int size);
 void jacobi_method( double** matrix_A, int rows, int cols, double* x, 
-													int n_iterations);
+										int n_iterations, double tol);
 
 void gauss_seidel_method( double** matrix_A, int rows, int cols, double* x, 
 														int n_iterations );
@@ -32,7 +33,7 @@ int main() {
 	create_matrix(A, rows, cols);
 		
 	print_vector(x, rows);
-	gauss_seidel_method(A, rows, cols, x, 10);
+	jacobi_method(A, rows, cols, x, 10, 10e-3);
 	// jacobi_method(A, rows, cols, x, 10);
 	print_vector(x, rows);
 
@@ -70,30 +71,33 @@ void print_vector( double* vector, int size ) {
 	cout << endl;
 }
 
-double norm_sum( double* vect, int size) {
-	double s = 0;
-	for (int i = 0; i < size; ++i) {
-		s+= vect[i];
-	}
-	return s;
-}
-
 double norm_sum(double* vect, int size) {
 	double sum = 0.;
 	for (int i = 0; i < size; ++i) {
 		sum += vect[i];
 	}
-	return sum;
+	return abs(sum);
+}
+
+double vector_substration(double* vect_1, double* vect_2, int size) {
+	double* tmp = new double[size];
+	for (int i = 0; i < size; ++i) {
+		tmp[i] = vect_1[i] - vect_2[i];
+	}
+	return norm_sum( tmp, size );
 }
 
 void jacobi_method( double** matrix_A, int rows, int cols, double* x, 
-														int n_iterations) {
+										int n_iterations, double tol) {
 	int iter = 0;
 	double* tmp_x = new double[rows];
 
 	print_matrix(matrix_A, rows, cols);
 
-	while( iter < n_iterations) {
+	double err = 1.;
+	cout << endl;
+	while( iter < n_iterations && tol < err) {
+
 		// cout << "iteration #" << iter << endl;
 		// print_vector(x, rows);
 		// print_vector(tmp_x, rows);
@@ -106,11 +110,13 @@ void jacobi_method( double** matrix_A, int rows, int cols, double* x,
 			}
 			tmp_x[i] = (-tmp_x[i]+matrix_A[i][cols-1])/matrix_A[i][i];
 		}
+		err = vector_substration(x, tmp_x, rows);
 		for (int k = 0; k < rows; ++k) {
-			double asd = tmp_x[k];
-			x[k] = asd;
+			x[k] = tmp_x[k];
 		}
 		iter++;
+
+		cout << "Tol: " << err << endl;
 	}
 
 	delete [] tmp_x;
