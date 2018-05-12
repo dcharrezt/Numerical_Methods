@@ -17,6 +17,7 @@ void jacobi_method( double** matrix_A, int rows, int cols, double* x,
 void gauss_seidel_method( double** matrix_A, int rows, int cols, double* x, 
 														int n_iterations );
 
+
 int main() {
 
 	int rows, cols;
@@ -75,6 +76,14 @@ double norm_sum( double* vect, int size) {
 		s+= vect[i];
 	}
 	return s;
+}
+
+double norm_sum(double* vect, int size) {
+	double sum = 0.;
+	for (int i = 0; i < size; ++i) {
+		sum += vect[i];
+	}
+	return sum;
 }
 
 void jacobi_method( double** matrix_A, int rows, int cols, double* x, 
