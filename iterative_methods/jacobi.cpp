@@ -16,8 +16,7 @@ void jacobi_method( double** matrix_A, int rows, int cols, double* x,
 										int n_iterations, double tol);
 
 void gauss_seidel_method( double** matrix_A, int rows, int cols, double* x, 
-														int n_iterations );
-
+											int n_iterations, double tol );
 
 int main() {
 
@@ -33,7 +32,8 @@ int main() {
 	create_matrix(A, rows, cols);
 		
 	print_vector(x, rows);
-	jacobi_method(A, rows, cols, x, 10, 10e-3);
+	// jacobi_method(A, rows, cols, x, 10, 10e-3);
+	gauss_seidel_method(A, rows, cols, x, 10, 10e-3);
 	// jacobi_method(A, rows, cols, x, 10);
 	print_vector(x, rows);
 
@@ -97,10 +97,6 @@ void jacobi_method( double** matrix_A, int rows, int cols, double* x,
 	double err = 1.;
 	cout << endl;
 	while( iter < n_iterations && tol < err) {
-
-		// cout << "iteration #" << iter << endl;
-		// print_vector(x, rows);
-		// print_vector(tmp_x, rows);
 		for(int i=0; i<rows; i++) {
 			tmp_x[i] = 0.;
 			for(int j=0; j<rows; j++) {
@@ -115,32 +111,48 @@ void jacobi_method( double** matrix_A, int rows, int cols, double* x,
 			x[k] = tmp_x[k];
 		}
 		iter++;
-
 		cout << "Tol: " << err << endl;
 	}
-
 	delete [] tmp_x;
 }
 
 void gauss_seidel_method( double** matrix_A, int rows, int cols, double* x, 
-														int n_iterations ) {
+											int n_iterations, double tol ) {
 	int iter = 0;
 	double tmp = 0.;
 
 	print_matrix(matrix_A, rows, cols);
+	double err = 1.;
+	double* tmp_x = new double[rows];
+	double* ms = new double[rows];
 
 	while( iter < n_iterations) {
 		for(int i=0; i<rows; i++) {
 			tmp = 0.;
+			// tmp_x[i] = 0.;
 			for(int j=0; j<rows; j++) {
 				if(i != j){
 					tmp += matrix_A[i][j]*x[j];
+					// tmp_x[i] += matrix_A[i][j]*x[j];
 				}
 			}
 			tmp = (-tmp+matrix_A[i][cols-1])/matrix_A[i][i];
+			// tmp_x[i] = (-tmp_x[i]+matrix_A[i][cols-1])/matrix_A[i][i];
+			cout << "x"<< i << " "<< tmp<< "  "; 
+			// ms[i] = x[i]
 			x[i] = tmp;
 		}
+		cout << endl;
+		// print_vector(x, rows);
+		// print_vector(tmp_x, rows);
+		err = vector_substration(x, tmp_x, rows);
 		iter++;
-		print_vector(x, rows);
+
+		// cout << "Tol: " << err << endl;
+
+		// print_vector(x, rows);
 	}
+
+	delete [] tmp_x;
+	delete [] ms;
 }

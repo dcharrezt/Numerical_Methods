@@ -43,10 +43,10 @@ int main() {
 		
 	double* x = new double[rows];
 	
-	PLU_method(A, rows, cols, x);
+	// PLU_method(A, rows, cols, x);
 	// LU_method(A, rows, cols, x);
 	// gauss_method(A, rows, cols, x);
-	// gauss_partial_pivot_method( A, rows, cols, x);
+	gauss_partial_pivot_method( A, rows, cols, x);
 	
 
 	for (int i = 0; i < rows; ++i)
@@ -129,18 +129,31 @@ void scaled_partial_pivot( double** matrix_A, int rows, int cols) {
 			tmp = MAX( tmp, abs(matrix_A[m][k]) );
 			index_max = m;
 		}
+
+		cout << "Processing column # " << k << endl; 
+		cout << "\nChanging row " << k << " to " << index_max << endl;
 		
 		for(int n=0; n<cols; n++) {
 			tmp = matrix_A[k][n];
 			matrix_A[k][n] = matrix_A[index_max][n];
 			matrix_A[index_max][n] = tmp;
 		}
+		print_matrix( matrix_A, rows, cols);
 	
 		for( int j = k+1; j < rows; j++ ) {
 			matrix_A[j][k] = matrix_A[j][k] / matrix_A[k][k];
-			for( int i = k+1; i < cols; i++ )
+			for( int i = k+1; i < cols; i++ ) {
 				matrix_A[j][i] = matrix_A[j][i] - matrix_A[j][k]*matrix_A[k][i];
+
+				// matrix_A[j][k] = 0;
+				
+			}
+			
+			cout << "Multiplicating row " << k << " with " 
+					<< matrix_A[j][k] << " Adding up to row "<<k+1
+					<<"   R"<<k+1<<" - R"<<k<<"*"<<matrix_A[j][k]<<endl;
 			matrix_A[j][k] = 0;
+			print_matrix( matrix_A, rows, cols);
 		}
 	}
 }

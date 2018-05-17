@@ -34,9 +34,6 @@ int main() {
 
     // system("gnuplot -p 'plot'");
     // system("gnuplot -p 'plot2'");
-
-
-
     // bisection_1(-2, 2, 0, 100);
     // bisection_2(-2, 2, 0, 0.0001);
     // bisection_3(-2, 2, 0, 0.0001);
@@ -45,7 +42,6 @@ int main() {
 
 
 }
-
 
 
 void GuardarDatos(FF k, FF a, FF b, FF p, FF f, char* fileName){
