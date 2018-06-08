@@ -2,18 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+X = []
+Y = []
+C = []
 
-
-
-
-
-n = 1024
-X = np.random.normal(0, 1, n)
-Y = np.random.normal(0, 1, n)
-T = np.arctan2(Y, X)
+with open("dots2.txt", 'r') as file:
+	for line in file:
+		asd= file.readline().rstrip('\n').split()
+		if( len(asd) == 3 ):
+			X.append( float(asd[0]) )
+			Y.append( float(asd[1]) )
+			C.append( str(asd[2]) )
 
 plt.axes([0., 0., 1, 1])
-plt.scatter(X, Y, s=10, c=T, alpha=.5)
+
+plt.scatter(X, Y, s=1, c=C, alpha=.5)
 
 plt.xlim(-1.5, 1.5)
 plt.xticks(())

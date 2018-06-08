@@ -14,20 +14,22 @@ double* newton_method( double* xy, int n, int iter );
 int main() {
 
 	int n_functions = 2;
-	double tol = 1e-2;
+	double tol = 1e-1;
 
 	double* XY = new double[2];
 	double* Xs = new double[3];
 	double* Ys = new double[3];
 
+	// XY[0] = 0.75;
+	// XY[1] = 0.563;
+	// newton_method( XY , n_functions, 15);
+	// cout << XY[0] << ' ' << XY[1] << ' ';
+
 	Xs[0] = -0.786;
 	Ys[0] = 0.618;
 
-	Xs[1] = 0.;
-	Ys[1]  = 0.;
-
-	Xs[2] = 0.786;
-	Ys[2]  = 0.618;
+	Xs[1] = 0.786;
+	Ys[1]  = 0.618;
 
 	for (double i = -1.5; i <= 1.5; i+=0.001) {
 		for (double j = -1.5; j <= 1.5; j+=0.001) {
@@ -40,14 +42,13 @@ int main() {
 
 			cout << i << ' ' << j << ' ';
 
-			if( abs(XY[0]-Xs[0]) < tol && abs(XY[1]-Ys[0]) < tol )
+			if( abs(XY[0]-Xs[0]) < tol && abs(XY[1]-Ys[0]) < tol ) {
 				cout << "Green" << endl;
-			if( abs(XY[0]-Xs[1]) < tol && abs(XY[1]-Ys[1]) < tol )
+			} else if ( abs(XY[0]-Xs[1]) < tol && abs(XY[1]-Ys[1]) < tol ) {
 				cout << "Blue" << endl;
-			if( abs(XY[0]-Xs[2]) < tol && abs(XY[1]-Ys[2]) < tol )
-				cout << "Red" << endl;
-			else
+			} else
 				cout << "black" << endl;
+
 		}
 	}
 
