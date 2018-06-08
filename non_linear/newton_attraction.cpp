@@ -40,6 +40,7 @@ void newton_method( double** JF, double x, double y, int n_functions ) {
 			tmp += JF[i][j]*F[j];
 		}
 		X[i] = tmp;
+	}
 
 	X[0] += x;
 	X[1] += y;
