@@ -8,13 +8,13 @@ double function_2( double x, double y );
 double partial_derivative( double(*f)(double,double), int e, double x, double y );
 void jacobian( double** JF, int n, double x, double y );
 void inverse_matrix( double** JF, int n );
-void newton_method( double** JF, double x, double y, int n );
+void newton_method( double x, double y, int n );
 
 int main() {
 
 	int n_functions = 2;
 
-	
+	newton_method( 1, 1, n_functions);
 
 	return 0;
 }
