@@ -11,13 +11,13 @@ float function( float x ) {
 
 coords read_input() {
 	int n_dots;
-	float x_tmp;
+	float x_tmp, y_tmp;
 	coords dots;
 	
 	cin >> n_dots;
 	for(int i = 0; i < n_dots; i++) {
-		cin >> x_tmp;
-		dots.push_back( make_pair( x_tmp, function(x_tmp)) );
+		cin >> x_tmp >> y_tmp;
+		dots.push_back( make_pair( x_tmp, y_tmp) );
 	}
 	return dots;
 }

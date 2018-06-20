@@ -6,7 +6,7 @@ X = []
 Y = []
 
 
-with open("output.txt", 'r') as file:
+with open("output_lagrange.txt", 'r') as file:
 	for line in file:
 		asd= line.rstrip('\n').split()
 		print(asd)
