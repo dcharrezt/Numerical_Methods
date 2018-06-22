@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <cstdio>
+#include <cstdlib>
 
 using namespace std;
 
@@ -23,22 +25,28 @@ coords read_input() {
 }
 
 void newton_method( coords dots, float p_x) {
-	float L = 0.; 
- 	float L_tmp;
-	for (int i = 0; i < dots.size(); ++i) {
-		L_tmp = 1;
-		for (int j = 0; j < dots.size(); ++j) {
-			if( i != j )
-				L_tmp *= ((p_x - dots[j].first) / (dots[i].first - dots[j].first));
+	float b = dots[0].second;
+	float tmp, div_dif;
+	vector<float> p;
+	int k = 1;
+	for (int i = 0; i < dots.size() - 1; ++i) {
+		for (int j = 0; j < (dots.size()-i-1); ++j) {
+			div_dif = ( dots[j+1].second - dots[j].second)/
+								(dots[i+j+1].first - dots[j].first);
+			dots[j].second = div_dif;
 		}
-		L_tmp *= dots[i].second;
-		L+=L_tmp;
+		tmp = 1.;
+		for (int i = 0; i < k; ++i) {
+			tmp*=( p_x - dots[i].first );
+		}
+		b+=( dots[0].second*tmp );
+		k++;
 	}
-	cout << p_x << " " << L << endl;
+	cout << p_x << ' ' << b << endl;
+ 
 }
 
 int main() {
-
 	coords dots;
 	dots = read_input();
 
@@ -49,7 +57,8 @@ int main() {
 		cout << dots[i].first << ' ' << dots[i].second << endl;
 	}
 
-	// newton_method( dots, p_x);
+	newton_method( dots, p_x);
+
 
 	return 0;
 }
