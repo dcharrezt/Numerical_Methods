@@ -11,35 +11,32 @@ float function_2 ( float x ) {
 }
 
 void trapeze_method(float(*f)(float), float a, float b, int n) {
-	float h = ( b - a ) / (2.*n);
+	float h = ( b - a ) / (n);
 	float sum = 0.;
-	float interval = float((b-a)/ n);
 	for (int i = 1; i <= n-1; ++i) {
-		sum += f(  interval*i + a );
+		sum += f(  h*i + a );
 	}
 	sum *= 2;
 	sum += f(a) + f(b);
-	sum *= (h);
-	cout << "Integral per Trapeze " << sum << endl;
+	sum *= (h/2.);
+	cout << "Integral with Trapeze " << sum << endl;
 }
 
 void simpson_method( float(*f)(float), float a, float b, int n ) {
-	float h = (b-a)/(3.*n);
+	float h = (b-a)/(n);
 	float sum = 0.;
-	float interval = float((b-a)/ n);
 	for (int i = 1; i <= (n/2)-1; ++i) {
-		sum += f( interval*i*2 + a);
+		sum += f( h*i*2 + a);
 	}
 	sum *= 2;
 	float tmp = 0.;
 	for (int i = 1; i <= (n/2); ++i) {
-		tmp += f( interval*(2*i-1) + a );
+		tmp += f( h*(2*i-1) + a );
 	}
 	tmp *= 4;
 	sum += f(a) + f(b) + tmp;
-	sum *= (h);
-	cout << "Integral per Simpson " << sum << endl;
-
+	sum *= (h/3.);
+	cout << "Integral with Simpson " << sum << endl;
 }
 
 int main() {
