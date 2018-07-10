@@ -64,17 +64,52 @@ void romberg_method( float(*f)(float), float a, float b, int n ) {
 	for (int j = 1; j < n; ++j) {
 		for (int i = 1; i < n; ++i) {
 			if( j <= i ) {
-				cout << j << " " << i << " "<< A[i][j-1] << " "
-						<< A[i-1][j-1] << endl;
+//				cout << j << " " << i << " "<< A[i][j-1] << " "
+//						<< A[i-1][j-1] << endl;
 				cout << pow(4, j-1) << " "  << (pow(4, j-1)-1) << endl;
 				A[i][j] = (pow(4, j) * A[i][j-1] - A[i-1][j-1])/(pow(4, j)-1);
 			}
 		}
 	}
-
 	print_matrix( A, n, n );
+	for (int i = 0; i < n; ++i)
+		delete [] A[i];
+	delete [] A;
+}
 
-
+void romberg_method_tol( float(*f)(float), float a, float b, int n, float tol ){
+	double** A = new double*[n];
+	float tmp;
+	bool flag = 0;
+	int pos1 = 0, pos2 = 0;
+	for( int i = 0; i < n; i++ )
+		A[i] = new double[n];
+	for( int i = 0; i < n; i++ ) {
+		A[i][0] = trapeze_method( f, a, b, pow(2, i ) );
+		if( (i>1) && (abs(A[i][0]-A[i-1][0]) < tol) ) {
+			pos1 = i;
+			pos2 = 0;
+			flag = 1;
+			break;
+		}
+	}
+	if( flag == 0 ) {
+		for (int j = 1; j < n; ++j) {
+			for (int i = 1; i < n; ++i) {
+				if( j <= i ) {
+					A[i][j] = (pow(4, j) * A[i][j-1] - A[i-1][j-1])/(pow(4, j)-1);
+					if( abs(A[i-1][j] - A[i][j] ) < tol ) {
+						pos1 = i;
+						pos2 = j;
+						i = n; j = n;
+						break;
+					}
+				}
+			}
+		}
+	}
+	print_matrix( A, n, n );
+	cout << "Last result: " << A[pos1][pos2] << endl;
 	for (int i = 0; i < n; ++i)
 		delete [] A[i];
 	delete [] A;
@@ -83,21 +118,15 @@ void romberg_method( float(*f)(float), float a, float b, int n ) {
 void simpson_method_3_8( float(*f)(float), float a, float b, int n ) {
 	float h = (b-a)/(n);
 	float sum = 0.;
-	for (int i = 1; i <= (n/3); ++i) {
-		sum += f( h*(i*3-2) + a);
-	}
-	sum *= 3;
-	float tmp = 0.;
-	for (int i = 1; i <= (n/3); ++i) {
-		tmp += f( h*(3*i-1) + a );
-	}
-	tmp *= 3;
-	float tmp_2 = 0.;
-	for (int i = 1; i <= ((n/3)-1); ++i) {
-		tmp_2 += f( h*(3*i) + a );
-	}
-	tmp_2 *= 2;
-	sum += f(a) + f(b) + tmp + tmp_2;
+	
+    for(int i=1;i<n;i++){
+        if(i%3==0)
+            sum=sum+2*f(a+i*h);
+        else
+            sum=sum+3*f(a+i*h);
+    }
+	
+	sum += f(a) + f(b);
 	sum *= ((3*h)/8.);
 	cout << "Integral with Simpson 3/8: " << sum << endl;
 }
@@ -106,14 +135,14 @@ int main() {
 
 	int n;
 	float a,b;
+	float pi = 3.141592653589793238;
 	cout << "Enter the range from a to b" << endl;
 	cin >> a >> b;
 	cout << "Enter the number of partitions N " << endl;
 	cin >> n;
-	// trapeze_method( function_2, a, b, n );
-	// simpson_method( function_2, a, b, n );
-	// simpson_method_3_8( function_2, a, b, n );
-	float pi = 3.141592653589793238;
-	romberg_method( function_3, 0, pi/2., 6 );
-
+//	trapeze_method( function_2, a, b, n );
+//	simpson_method( function_2, a, b, n );
+//	simpson_method_3_8( function_2, a, b, n );
+//	romberg_method( function_3, 0, pi/2., 6 );
+	romberg_method_tol( function_3, 0, pi/2., 6, 1e-4 );
 }
