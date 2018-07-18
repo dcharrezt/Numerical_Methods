@@ -11,7 +11,7 @@ float function_2 ( float x ) {
 }
 
 float function_3 ( float x ) {
-	return sin(x);
+	return sin(x*x);
 }
 
 float trapeze_method(float(*f)(float), float a, float b, int n) {
@@ -142,7 +142,7 @@ int main() {
 	cin >> n;
 //	trapeze_method( function_2, a, b, n );
 //	simpson_method( function_2, a, b, n );
-//	simpson_method_3_8( function_2, a, b, n );
+	simpson_method_3_8( function_3, a, b, n );
 //	romberg_method( function_3, 0, pi/2., 6 );
-	romberg_method_tol( function_3, 0, pi/2., 6, 1e-4 );
+//	romberg_method_tol( function_3, 0, pi/2., 6, 1e-4 );
 }

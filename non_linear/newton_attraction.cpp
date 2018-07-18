@@ -25,32 +25,31 @@ int main() {
 	// newton_method( XY , n_functions, 15);
 	// cout << XY[0] << ' ' << XY[1] << ' ';
 
-	Xs[0] = -0.786;
-	Ys[0] = 0.618;
+//	Xs[0] = -0.786;
+//	Ys[0] = 0.618;
 
-	Xs[1] = 0.786;
-	Ys[1]  = 0.618;
+//	Xs[1] = 0.786;
+//	Ys[1]  = 0.618;
 
-	for (double i = -1.5; i <= 1.5; i+=0.001) {
-		for (double j = -1.5; j <= 1.5; j+=0.001) {
-			// cout << "i " << i << ' '<< "j " << j << ' ';;
+//	for (double i = -1.5; i <= 1.5; i+=0.01) {
+//		for (double j = -1.5; j <= 1.5; j+=0.01) {
+//			// cout << "i " << i << ' '<< "j " << j << ' ';;
 
-			XY[0] = i;
-			XY[1] = j;
+			XY[0] = 1;
+			XY[1] = 1;
 
 			newton_method( XY , n_functions, 15);
 
-			cout << i << ' ' << j << ' ';
 
-			if( abs(XY[0]-Xs[0]) < tol && abs(XY[1]-Ys[0]) < tol ) {
-				cout << "Green" << endl;
-			} else if ( abs(XY[0]-Xs[1]) < tol && abs(XY[1]-Ys[1]) < tol ) {
-				cout << "Blue" << endl;
-			} else
-				cout << "black" << endl;
+//			if( abs(XY[0]-Xs[0]) < tol && abs(XY[1]-Ys[0]) < tol ) {
+//				cout << "Green" << endl;
+//			} else if ( abs(XY[0]-Xs[1]) < tol && abs(XY[1]-Ys[1]) < tol ) {
+//				cout << "Blue" << endl;
+//			} else
+//				cout << "black" << endl;
 
-		}
-	}
+//		}
+//	}
 
 
 	return 0;
@@ -90,11 +89,12 @@ double* newton_method(double* xy, int n_functions, int iter ) {
 			for (int j = 0; j < n_functions; ++j ) {
 				tmp += JF_F[i][j]*F[j];
 			}
+			
 			X[i] = tmp;
 		}
 
 		// cout << X[0] << ' ' << X[1] << endl;
-
+	cout << "k " << x << " " << y << endl;
 		x = x - X[0];
 		y = y - X[1];
 
@@ -153,10 +153,22 @@ void jacobian( double** JF, int n, double x, double y ) {
 	}
 }
 
-double function_1( double x, double y ) {
-	return x*x + y*y -1;
+//double function_1( double x, double y ) {
+//	return x*x + y*y -1;
+//}
+
+//double function_2( double x, double y ) {
+//	return -(x*x)+y;
+//}
+
+double function_1( double x, double y ){
+	return x*x + y*y - 4;
 }
 
 double function_2( double x, double y ) {
-	return -(x*x)+y;
+	return x - y*y - 1;
 }
+
+
+
+

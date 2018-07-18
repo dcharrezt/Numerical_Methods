@@ -38,10 +38,10 @@ int main() {
 
 	double* x_n_0 = new double[rows];
 
-	x_n_0[0]=1.2;
-	x_n_0[1]=0.2;
+	x_n_0[0]=1;
+	x_n_0[1]=1;
 
-	newton_method( JF_F, x_n_0, 1e-1, 200 );
+	newton_method( JF_F, x_n_0, 1e-10, 5 );
 
 	for (int i = 0; i < rows; ++i)
 		delete [] JF_F[i];
@@ -71,7 +71,7 @@ void newton_method(double** JF_F, double* x_n_0 ,double tol, int n_iter ) {
 		cout << "ITERATION " << iter << endl;
 		func_2( x_n_0[0], x_n_0[1], JF_F );
 		JF_2( x_n_0[0], x_n_0[1], JF_F);
-		print_vector( x_n_0, rows);
+
 		PLU_method( JF_F, rows, columns, x_n_1 );
 		for (int i = 0; i < rows; ++i)
 		{
@@ -79,12 +79,13 @@ void newton_method(double** JF_F, double* x_n_0 ,double tol, int n_iter ) {
 		}
 		// cout << "VECT " << vector_substration(x_n_0, x_n_1, rows) << endl;
 		// cout << "VECT " << tol << endl;
-		if( vector_substration(x_n_1, x_n_0, rows) < tol ) {
-			break;
-		}
+//		if( vector_substration(x_n_1, x_n_0, rows) < tol ) {
+//			break;
+//		}
 		for (int i = 0; i < rows; ++i)
 		{
 			x_n_0[i] = x_n_1[i];
+			print_vector( x_n_0, rows);
 		}
 		iter++;
 	}
@@ -94,15 +95,25 @@ void newton_method(double** JF_F, double* x_n_0 ,double tol, int n_iter ) {
 	delete [] x_n_1;
 }
 
-double function_1( double x_1, double x_2) {
-	return x_1*x_1 + x_2*x_2 - 2;
+//double function_1( double x_1, double x_2) {
+//	return x_1*x_1 + x_2*x_2 - 2;
+//}
+
+//double function_2( double x_1, double x_2) {
+//	return x_1 - x_2 - 1;
+//}
+
+double function_1( double x, double y ){
+	return x*x + y*y - 4;
 }
 
-double function_2( double x_1, double x_2) {
-	return x_1 - x_2 - 1;
+double function_2( double x, double y ) {
+	return x - y*y - 1;
 }
+
 
 double dev_f_1_1( double x_1, double x_2 ) {
+//	return 2*x_1;
 	return 2*x_1;
 }
 
